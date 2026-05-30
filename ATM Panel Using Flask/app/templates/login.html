@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}ATM Secure Access{% endblock %}
+
+{% block layout %}
+<div class="auth-wrapper">
+    <div class="glass-panel auth-container glass-panel-floating">
+        <div class="auth-logo">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span class="gradient-text">ATMOSPHERE</span>
+        </div>
+        <p class="auth-subtitle">Futuristic Secure Banking Portal</p>
+        
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <label class="form-label" for="account">Account Number</label>
+                <div class="input-container">
+                    <input class="form-input" type="text" id="account" name="account" placeholder="Enter 8-digit Account" pattern="[0-9]{8}" maxlength="8" required autocomplete="off">
+                    <span class="input-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="pin">Secure PIN</label>
+                <div class="input-container">
+                    <input class="form-input" type="password" id="pin" name="pin" placeholder="Enter 4-digit PIN" pattern="[0-9]{4}" maxlength="4" required autocomplete="off">
+                    <span class="input-icon" id="toggle-pin" style="cursor:pointer; pointer-events:auto;">
+                        <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </span>
+                </div>
+            </div>
+            
+            <button class="btn-premium" type="submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                Secure Login
+            </button>
+        </form>
+        
+        <div class="test-accounts-box">
+            <div class="test-accounts-title">Authorized Test Accounts</div>
+            <div class="test-account-row">
+                <span>Holder: Syed Khadar Ali</span>
+                <span>Acc: <strong>12316600</strong> | PIN: <strong>1123</strong></span>
+            </div>
+            <div class="test-account-row">
+                <span>Holder: Syed Moulali</span>
+                <span>Acc: <strong>12316601</strong> | PIN: <strong>7789</strong></span>
+            </div>
+            <div class="test-account-row" style="color: var(--accent-red); opacity: 0.85;">
+                <span>Holder: Syed Rahamathunnisa (Blocked)</span>
+                <span>Acc: <strong>12316602</strong> | PIN: <strong>1231</strong></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // PIN visibility toggler
+    const togglePin = document.getElementById('toggle-pin');
+    const pinInput = document.getElementById('pin');
+    
+    if(togglePin && pinInput) {
+        togglePin.addEventListener('click', () => {
+            const isPassword = pinInput.type === 'password';
+            pinInput.type = isPassword ? 'text' : 'password';
+            
+            // Toggle SVG icon design
+            togglePin.innerHTML = isPassword ? 
+                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>` :
+                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        });
+    }
+</script>
+{% endblock %}

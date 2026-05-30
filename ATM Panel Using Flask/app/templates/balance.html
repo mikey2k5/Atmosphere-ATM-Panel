@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Wealth Portfolio Enquiries{% endblock %}
+
+{% block nav_balance %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Balance Enquiry</h1>
+        <p class="page-subtitle">Real-time ledger audit log and total balance verification.</p>
+    </div>
+</div>
+
+<div class="balance-panel-grid">
+    <!-- Balance Details Panel -->
+    <div class="glass-panel balance-value-container glass-panel-floating">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.4));"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        
+        <h3 style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.1em; margin-top: 16px;">Verified Liquidity</h3>
+        <div class="balance-large gradient-text">{{ format_currency(balance) }}</div>
+        
+        <div style="width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 20px; margin-top: 20px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+            <span style="color: var(--text-secondary);">Account Holder:</span>
+            <strong>{{ name }}</strong>
+        </div>
+        <div style="width: 100%; padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+            <span style="color: var(--text-secondary);">Account ID:</span>
+            <strong style="letter-spacing: 0.05em;">{{ account_number }}</strong>
+        </div>
+        <div style="width: 100%; padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+            <span style="color: var(--text-secondary);">Status:</span>
+            <strong style="color: var(--accent-green);">Active Secured</strong>
+        </div>
+        
+        <a href="{{ url_for('main.dashboard') }}" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Control Center
+        </a>
+    </div>
+
+    <!-- Right Side: Transaction Ledger History -->
+    <div class="glass-panel activity-card">
+        <div class="activity-header">
+            <h2 class="quick-actions-title" style="margin-bottom:0;">Account Audit History</h2>
+            <span style="font-size:0.75rem; color: var(--text-secondary); text-transform:uppercase;">Ledger Logs</span>
+        </div>
+        
+        <div class="activity-list">
+            {% if transactions %}
+                {% for tx in transactions %}
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon-box {% if tx.type == 'Deposit' %}icon-deposit{% elif tx.type == 'Withdrawal' %}icon-withdraw{% else %}icon-security{% endif %}">
+                                {% if tx.type == 'Deposit' %}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                                {% elif tx.type == 'Withdrawal' %}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                                {% else %}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                                {% endif %}
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-title">{{ tx.description }}</span>
+                                <span class="activity-time">{{ tx.timestamp.strftime('%d %b %Y, %I:%M %p') }}</span>
+                            </div>
+                        </div>
+                        <div class="activity-right">
+                            <span class="activity-amount {% if tx.type == 'Deposit' %}amount-positive{% elif tx.type == 'Withdrawal' %}amount-negative{% endif %}">
+                                {% if tx.type == 'Deposit' %}+{% elif tx.type == 'Withdrawal' %}-{% endif %}
+                                ₹{{ "{:,.2f}".format(tx.amount) }}
+                            </span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; color: var(--border-color);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <p style="font-size: 0.9rem;">No transactions recorded in this account yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

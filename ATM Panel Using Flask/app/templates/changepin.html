@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Credentials Management{% endblock %}
+
+{% block nav_changepin %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Change PIN</h1>
+        <p class="page-subtitle">Secure your wealth profile by updating your secret ATM authorization PIN.</p>
+    </div>
+</div>
+
+<div style="max-width: 580px; margin: 0 auto;">
+    <div class="glass-panel activity-card glass-panel-floating">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255, 255, 255, 0.05); padding-bottom: 20px; margin-bottom: 30px;">
+            <div>
+                <h2 style="font-size: 1.35rem; font-family: var(--font-outfit);">Security Control Panel</h2>
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top:2px;">Credential Rotation Suite</p>
+            </div>
+            <span style="font-family: var(--font-outfit); font-size:0.8rem; background:rgba(157, 78, 221, 0.1); border:1px solid rgba(157, 78, 221, 0.2); color: var(--accent-purple); padding:6px 12px; border-radius:30px;">High-grade Hashed Encryption</span>
+        </div>
+
+        <form method="POST" action="{{ url_for('transactions.changepin') }}">
+            <div class="form-group">
+                <label class="form-label" for="old_pin">Current Secure PIN</label>
+                <div class="input-container">
+                    <input class="form-input" type="password" id="old_pin" name="old_pin" placeholder="Enter 4-digit Old PIN" pattern="[0-9]{4}" maxlength="4" required autocomplete="off">
+                    <span class="input-icon" id="toggle-old-pin" style="cursor:pointer; pointer-events:auto;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="new_pin">New Secure PIN</label>
+                <div class="input-container">
+                    <input class="form-input" type="password" id="new_pin" name="new_pin" placeholder="Enter 4-digit New PIN" pattern="[0-9]{4}" maxlength="4" required autocomplete="off">
+                    <span class="input-icon" id="toggle-new-pin" style="cursor:pointer; pointer-events:auto;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </span>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-secondary); display:flex; flex-direction:column; gap:4px; padding-left: 4px;">
+                    <div style="display:flex; align-items:center; gap: 6px;">
+                        <span style="width: 5px; height: 5px; border-radius:50%; background:var(--accent-purple);"></span>
+                        PIN must consist of exactly 4 numeric digits
+                    </div>
+                    <div style="display:flex; align-items:center; gap: 6px;">
+                        <span style="width: 5px; height: 5px; border-radius:50%; background:var(--accent-purple);"></span>
+                        Do not reuse simple structures (e.g., '1234' or '0000')
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-premium" style="background: linear-gradient(135deg, var(--accent-purple) 0%, #7b2cbf 100%); box-shadow: 0 4px 15px rgba(157, 78, 221, 0.2);" type="submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                Modify Secure PIN
+            </button>
+        </form>
+
+        <div style="text-align:center;">
+            <a href="{{ url_for('main.dashboard') }}" class="back-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Cancel and return
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Visibility toggle functionality for Old and New PINs
+    const setupPinToggle = (triggerId, inputId) => {
+        const trigger = document.getElementById(triggerId);
+        const input = document.getElementById(inputId);
+        
+        if (trigger && input) {
+            trigger.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                
+                trigger.innerHTML = isPassword ? 
+                    `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>` :
+                    `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+            });
+        }
+    };
+    
+    setupPinToggle('toggle-old-pin', 'old_pin');
+    setupPinToggle('toggle-new-pin', 'new_pin');
+</script>
+{% endblock %}

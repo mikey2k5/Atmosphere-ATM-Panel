@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Fintech Control Center{% endblock %}
+
+{% block nav_dashboard %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Welcome back, <span class="gradient-text">{{ name }}</span></h1>
+        <p class="page-subtitle">Here is a summary of your premium wealth profile today.</p>
+    </div>
+    <div style="font-family: var(--font-outfit); font-weight: 600; font-size: 0.95rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; background: rgba(0, 240, 255, 0.05); padding: 10px 16px; border-radius: 30px; border: 1px solid rgba(0, 240, 255, 0.15);">
+        <span style="display:inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan);"></span>
+        System Status: Online
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Left Column: Balance Card and Stats Widgets -->
+    <div>
+        <!-- Premium Hologram Bank Card -->
+        <div class="premium-card">
+            <div class="card-header-row">
+                <div class="card-brand">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    ATMOSPHERE
+                </div>
+                <div class="card-chip"></div>
+            </div>
+            
+            <div class="card-mid-row">
+                <div class="card-label">Current Balance</div>
+                <div style="font-family: var(--font-outfit); font-size: 2.1rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text-primary);">
+                    {{ format_currency(balance) }}
+                </div>
+            </div>
+            
+            <div class="card-footer-row">
+                <div>
+                    <div class="card-label">Card Holder</div>
+                    <div class="card-holder">{{ name }}</div>
+                </div>
+                <div class="card-expiry">
+                    <div class="card-label">Card Number</div>
+                    <div class="card-number" style="font-size: 0.95rem; letter-spacing: 0.08em;">4821 9502 {{ account_number[0:4] }} {{ account_number[4:8] }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Statistics Widgets Grid -->
+        <div class="stats-container">
+            <div class="glass-panel stat-widget glass-panel-floating">
+                <div class="stat-header">
+                    <span>NET DEPOSITED</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                </div>
+                <div class="stat-value" style="color: var(--accent-green);">
+                    {{ format_currency(analytics.total_deposited) if analytics else format_currency(balance) }}
+                </div>
+            </div>
+            
+            <div class="glass-panel stat-widget glass-panel-floating">
+                <div class="stat-header">
+                    <span>NET WITHDRAWALS</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                </div>
+                <div class="stat-value" style="color: var(--accent-red);">
+                    {{ format_currency(analytics.total_withdrawn) if analytics else format_currency(0.0) }}
+                </div>
+            </div>
+            
+            <div class="glass-panel stat-widget glass-panel-floating">
+                <div class="stat-header">
+                    <span>TOTAL ACTIVITY LOGS</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <div class="stat-value">
+                    {{ analytics.transaction_count if analytics else 0 }} Transactions
+                </div>
+            </div>
+            
+            <div class="glass-panel stat-widget glass-panel-floating">
+                <div class="stat-header">
+                    <span>DAILY CEILING LIMIT</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                </div>
+                <div class="stat-value" style="color: var(--accent-cyan); font-size: 1.25rem; align-items:center; display:flex; height: 100%;">
+                    ₹20,000 / Withdrawal
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: Recent Transactions Mini Statement -->
+    <div class="glass-panel activity-card">
+        <div class="activity-header">
+            <h2 class="quick-actions-title" style="margin-bottom:0;">Live Statement Log</h2>
+            <div style="font-size:0.8rem; color: var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">Recent Activity</div>
+        </div>
+        
+        <div class="activity-list">
+            {% if transactions %}
+                {% for tx in transactions %}
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-icon-box {% if tx.type == 'Deposit' %}icon-deposit{% elif tx.type == 'Withdrawal' %}icon-withdraw{% else %}icon-security{% endif %}">
+                                {% if tx.type == 'Deposit' %}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                                {% elif tx.type == 'Withdrawal' %}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                                {% else %}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                                {% endif %}
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-title">{{ tx.description }}</span>
+                                <span class="activity-time">{{ tx.timestamp.strftime('%d %b %Y, %I:%M %p') }}</span>
+                            </div>
+                        </div>
+                        <div class="activity-right">
+                            <span class="activity-amount {% if tx.type == 'Deposit' %}amount-positive{% elif tx.type == 'Withdrawal' %}amount-negative{% endif %}">
+                                {% if tx.type == 'Deposit' %}+{% elif tx.type == 'Withdrawal' %}-{% endif %}
+                                ₹{{ "{:,.2f}".format(tx.amount) }}
+                            </span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; color: var(--border-color);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <p style="font-size: 0.9rem;">No transactions recorded in this account yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Quick Action panel below grid -->
+<div class="glass-panel quick-actions-panel">
+    <h2 class="quick-actions-title">Futuristic Fast ATM Actions</h2>
+    <div class="quick-actions-grid">
+        <a href="{{ url_for('main.balance') }}" class="glass-panel quick-action-btn glass-panel-floating">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <span class="quick-action-label">Balance Enquiry</span>
+        </a>
+        <a href="{{ url_for('transactions.withdraw') }}" class="glass-panel quick-action-btn glass-panel-floating">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+            <span class="quick-action-label">Withdraw Cash</span>
+        </a>
+        <a href="{{ url_for('transactions.deposit') }}" class="glass-panel quick-action-btn glass-panel-floating">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+            <span class="quick-action-label">Deposit Cash</span>
+        </a>
+        <a href="{{ url_for('transactions.changepin') }}" class="glass-panel quick-action-btn glass-panel-floating">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+            <span class="quick-action-label">Change Secure PIN</span>
+        </a>
+    </div>
+</div>
+{% endblock %}
